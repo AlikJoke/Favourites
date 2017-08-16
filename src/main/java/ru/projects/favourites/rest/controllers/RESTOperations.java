@@ -17,13 +17,14 @@ public interface RESTOperations {
 
 	/**
 	 * <b>Только для избранных. Не для списка пользователей.</b>
+	 * 
 	 * @param entityType
 	 * @return
 	 */
 	@NotNull
-	List<DomainResource> readAll(@NotNull String entityType);
+	List<DomainResource> readAll(@NotNull String entityType, @NotNull String username);
 
-	void create(@NotNull String entityType, @NotNull DomainResource resource);
+	void create(@NotNull String entityType, @NotNull DomainResource resource, @NotNull String username);
 
 	@NotNull
 	DomainResource update(@NotNull String entityType, @NotNull DomainResource resource);

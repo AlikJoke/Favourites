@@ -13,7 +13,7 @@ public interface Queries {
 	@NotNull
 	@NotEmpty
 	String getDeleteQuery(@NotNull DomainObject domain);
-	
+
 	@NotNull
 	@NotEmpty
 	String getDeleteQuery(@NotNull String entityType);
@@ -52,5 +52,27 @@ public interface Queries {
 		@NotNull
 		@NotEmpty
 		String getFindAllUsersQuery();
+	}
+
+	@NotNull
+	SchemaBuilder getSchemaBuilder();
+
+	public interface SchemaBuilder {
+
+		@NotNull
+		@NotEmpty
+		String checkTableExistsQuery();
+
+		@NotNull
+		@NotEmpty
+		String getQueryToCreateTableFavourites();
+
+		@NotNull
+		@NotEmpty
+		String getQueryToCreateTableUsers();
+
+		@NotNull
+		@NotEmpty
+		String getQueryToCreateIndex(@NotNull String tableName, @NotNull String columnName);
 	}
 }

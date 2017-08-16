@@ -2,6 +2,7 @@ package ru.projects.favourites.rest.controllers;
 
 import java.util.List;
 
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,12 +19,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ru.projects.favourites.rest.resources.DomainResource;
+import ru.projects.favourites.user.CurrentUser;
 
 @RestController
 public class RESTController {
 
 	@Autowired
 	private RESTOperations operations;
+
+	@Autowired
+	private Provider<CurrentUser> currentUser;
 
 	@GetMapping(RESTOperations.RESOURCE_URI)
 	@ResponseBody
@@ -36,13 +41,13 @@ public class RESTController {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public List<DomainResource> readAll(@PathVariable("entityType") String entityType) {
-		return operations.readAll(entityType);
+		return operations.readAll(entityType, currentUser.get().getUsername());
 	}
 
 	@PostMapping(RESTOperations.BASE_URI)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void create(@PathVariable("entityType") String entityType, @RequestBody DomainResource resource) {
-		operations.create(entityType, resource);
+		operations.create(entityType, resource, currentUser.get().getUsername());
 	}
 
 	@RequestMapping(value = RESTOperations.RESOURCE_URI, method = RequestMethod.PUT)

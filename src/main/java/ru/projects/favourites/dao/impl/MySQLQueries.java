@@ -44,4 +44,10 @@ public class MySQLQueries implements Queries {
 		return null;
 	}
 
+	@Override
+	public SchemaBuilder getSchemaBuilder() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

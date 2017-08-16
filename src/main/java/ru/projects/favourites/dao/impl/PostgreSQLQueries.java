@@ -76,6 +76,18 @@ public class PostgreSQLQueries implements Queries {
 		static final String UPDATE_QUERY = "UPDATE <tableName> SET <columnName> = ?";
 		static final String FIND_FAVOURITES_QUERY = "SELECT * FROM favourite WHERE username = ?";
 		static final String FIND_USERS_QUERY = "SELECT * FROM user";
+		static final String CHECK_TABLE = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = ?)";
+		static final String CREATE_FV_TABLE = "CREATE TABLE FAVOURITE (UID varchar(64) NOT NULL, NAME varchar(256) NOT NULL, "
+				+ "LINK varchar(512) NOT NULL, ADDING_DT timestamp NOT NULL, DELETING_DT timestamp NULL, "
+				+ "username varchar(64) NOT NULL references USER(UID), PRIMARY KEY (UID));";
+		static final String CREATE_USER_TABLE = "CREATE TABLE USER (UID varchar(64) NOT NULL, EMAIL varchar(128) NOT NULL, "
+				+ "PASSWORD varchar(64) NOT NULL, REG_DATE date NOT NULL, DELETING_DT timestamp NULL, "
+				+ "PRIMARY KEY (UID));";
+		static final String CREATE_INDEX_TABLE = "CREATE INDEX idx_<columnName> ON <tableName> (<columnName>);";
+
+		static String replaceDDLPlaceholders(String tableName, String columnName, String sourceQuery) {
+			return sourceQuery.replace(TABLE_NAME_PLACEHOLDER, tableName).replace(COLUMN_NAME_PLACEHOLDER, columnName);
+		}
 
 		static String replacePlaceholders(DomainObject domain, String sourceQuery) {
 			return sourceQuery.replace(TABLE_NAME_PLACEHOLDER, domain.getEntityName());
@@ -94,6 +106,33 @@ public class PostgreSQLQueries implements Queries {
 	@Override
 	public String getDeleteQuery(String entityType) {
 		return Patterns.replaceDeleteByIdPlaceholders(entityType, Patterns.DELETE_QUERY);
+	}
+
+	@Override
+	public SchemaBuilder getSchemaBuilder() {
+		return new SchemaBuilder() {
+
+			@Override
+			public String checkTableExistsQuery() {
+				return Patterns.CHECK_TABLE;
+			}
+
+			@Override
+			public String getQueryToCreateTableFavourites() {
+				return Patterns.CREATE_FV_TABLE;
+			}
+
+			@Override
+			public String getQueryToCreateTableUsers() {
+				return Patterns.CREATE_USER_TABLE;
+			}
+
+			@Override
+			public String getQueryToCreateIndex(String tableName, String columnName) {
+				return Patterns.replaceDDLPlaceholders(tableName, columnName, Patterns.CREATE_INDEX_TABLE);
+			}
+
+		};
 	}
 
 }

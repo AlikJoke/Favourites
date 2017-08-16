@@ -4,9 +4,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 @Component("currentUser")
-@Scope("session")
+@Scope(WebApplicationContext.SCOPE_SESSION)
 public class CurrentUserImpl implements CurrentUser {
 
 	@Override
