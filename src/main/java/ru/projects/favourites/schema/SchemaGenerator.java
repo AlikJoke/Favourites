@@ -9,7 +9,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import ru.projects.favourites.dao.Queries;
+import ru.projects.favourites.domain.EntityType;
 
+/**
+ * Класс, выполняющий генерацию схемы БД приложения.
+ * 
+ * @see JdbcTemplate
+ * 
+ * @author Alimurad A. Ramazanov
+ * @since 16.08.2017
+ * @version 1.0.1
+ *
+ */
 @Component
 public class SchemaGenerator {
 
@@ -19,33 +30,32 @@ public class SchemaGenerator {
 	@Autowired
 	private Queries queries;
 
-	private final static String FV_TABLE_NAME = "FAVOURITE";
-	private final static String[] FV_INDEXED_COLUMNS = new String[] { "NAME", "DELETING_DT", "ORDER", "COUNTER",
+	private final static String[] FV_INDEXED_COLUMNS = new String[] { "NAME", "DELETING_DT", "ORDER_FV", "COUNTER",
 			"USERNAME" };
 
-	private final static String USER_TABLE_NAME = "USER";
-	private final static String[] USER_INDEXED_COLUMNS = new String[] { "EMAIL", "DELETING_DT" };
+	private final static String[] USER_INDEXED_COLUMNS = new String[] { "EMAIL", "DELETING_DT", "LAST_LOGGED" };
 
 	@PostConstruct
 	public void buildSchema() {
 		this.generateSchemaIfNotExists();
 	}
-	
-	public void generateSchemaIfNotExists() {
+
+	private void generateSchemaIfNotExists() {
 		Boolean userExists = jdbcTemplate.queryForObject(queries.getSchemaBuilder().checkTableExistsQuery(),
-				Boolean.class, new Object[] { USER_TABLE_NAME });
+				Boolean.class, new Object[] { EntityType.USER.getName() });
 		if (!userExists) {
 			jdbcTemplate.execute(queries.getSchemaBuilder().getQueryToCreateTableUsers());
 			Stream.of(USER_INDEXED_COLUMNS).forEach(columnName -> jdbcTemplate
-					.execute(queries.getSchemaBuilder().getQueryToCreateIndex(USER_TABLE_NAME, columnName)));
+					.execute(queries.getSchemaBuilder().getQueryToCreateIndex(EntityType.USER.getName(), columnName)));
 		}
-		
+
 		Boolean fvExists = jdbcTemplate.queryForObject(queries.getSchemaBuilder().checkTableExistsQuery(),
-				Boolean.class, new Object[] { FV_TABLE_NAME });
+				Boolean.class, new Object[] { EntityType.FAVOURITE.getName() });
 		if (!fvExists) {
 			jdbcTemplate.execute(queries.getSchemaBuilder().getQueryToCreateTableFavourites());
-			Stream.of(FV_INDEXED_COLUMNS).forEach(columnName -> jdbcTemplate
-					.execute(queries.getSchemaBuilder().getQueryToCreateIndex(FV_TABLE_NAME, columnName)));
+			Stream.of(FV_INDEXED_COLUMNS).forEach(columnName -> jdbcTemplate.execute(
+					queries.getSchemaBuilder().getQueryToCreateIndex(EntityType.FAVOURITE.getName(), columnName)));
+
 		}
 	}
 }

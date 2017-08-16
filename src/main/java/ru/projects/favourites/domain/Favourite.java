@@ -2,19 +2,40 @@ package ru.projects.favourites.domain;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotNull;
+
+/**
+ * Класс, описывающий один объект избранного (страницу).
+ * 
+ * @see DomainObject
+ * 
+ * @author Alimurad A. Ramazanov
+ * @since 15.08.2017
+ * @version 1.0.0
+ *
+ */
 public class Favourite extends DomainObject {
 
-	private static final String ENTITY_NAME = "favourite";
-
+	@NotNull
 	private String name;
+	
+	@NotNull
 	private String link;
+	
+	@NotNull
 	private Long counter;
+	
+	@NotNull
 	private Integer order;
+	
+	@NotNull
 	private LocalDateTime addingDT;
+	
+	@NotNull
 	private String userName;
 
 	public Favourite(String link, String name, String username) {
-		super(link.hashCode() + name.hashCode());
+		super(link.hashCode() + name.hashCode() + username.hashCode());
 		this.link = link;
 		this.name = name;
 		this.userName = username;
@@ -72,7 +93,7 @@ public class Favourite extends DomainObject {
 
 	@Override
 	public String getEntityName() {
-		return ENTITY_NAME;
+		return EntityType.FAVOURITE.getName();
 	}
 
 	public LocalDateTime getAddingDT() {

@@ -34,14 +34,19 @@ public class UserResource extends DomainResource {
 	@NotEmpty
 	private final String password;
 
+	@NotNull
+	private final LocalDateTime lastLogged;
+
 	@JsonCreator
 	public UserResource(@JsonProperty("uid") String uid, @JsonProperty("deletingDT") LocalDateTime deletingDT,
 			@JsonProperty("isDeleted") boolean isDeleted, @JsonProperty("email") String email,
-			@JsonProperty("regDate") LocalDate regDate, @JsonProperty("password") String password) {
+			@JsonProperty("lastLogged") LocalDateTime lastLogged, @JsonProperty("regDate") LocalDate regDate,
+			@JsonProperty("password") String password) {
 		super(uid, deletingDT, isDeleted);
 		this.email = email;
 		this.regDate = regDate;
 		this.password = password;
+		this.lastLogged = lastLogged;
 	}
 
 	public UserResource(User user) {
@@ -49,6 +54,7 @@ public class UserResource extends DomainResource {
 		this.email = user.getEmail();
 		this.regDate = user.getRegDate();
 		this.password = user.getPassword();
+		this.lastLogged = user.getLastLoggedDT();
 	}
 
 	@JsonProperty("email")
@@ -61,6 +67,11 @@ public class UserResource extends DomainResource {
 		return this.regDate;
 	}
 
+	@JsonProperty("lastLogged")
+	public LocalDateTime getLastLogged() {
+		return this.lastLogged;
+	}
+
 	@Override
 	public DomainObject convertToDomainObject(boolean isNew, String username) {
 		final User user;
@@ -70,6 +81,7 @@ public class UserResource extends DomainResource {
 			user = new User(getUID(), getDeletingDT(), password);
 			user.setEmail(getEmail());
 			user.setRegDate(getRegDate());
+			user.setLastLoggedDT(getLastLogged());
 		}
 
 		return user;

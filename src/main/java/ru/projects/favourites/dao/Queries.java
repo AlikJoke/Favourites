@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import ru.projects.favourites.domain.DomainObject;
+import ru.projects.favourites.domain.EntityType;
 import ru.projects.favourites.domain.Favourite;
 import ru.projects.favourites.domain.User;
 
@@ -12,7 +12,7 @@ public interface Queries {
 
 	@NotNull
 	@NotEmpty
-	String getDeleteQuery(@NotNull DomainObject domain);
+	String getDeleteQuery(@NotNull EntityType entityType);
 
 	@NotNull
 	@NotEmpty
@@ -20,11 +20,11 @@ public interface Queries {
 
 	@NotNull
 	@NotEmpty
-	String getFindQuery(@NotNull DomainObject domain);
+	String getFindQuery(@NotNull EntityType entityType);
 
 	@NotNull
 	@NotEmpty
-	String getUpdateQuery(@NotNull DomainObject favourite, @NotNull @NotEmpty String columnName);
+	String getUpdateQuery(@NotNull EntityType entityType, @NotNull @NotEmpty String columnName);
 
 	@NotNull
 	FavouriteQueries getFavouriteQueries();

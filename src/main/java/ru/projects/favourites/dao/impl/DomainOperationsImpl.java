@@ -12,26 +12,34 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import ru.projects.favourites.dao.DomainOperations;
 import ru.projects.favourites.dao.Queries;
-import ru.projects.favourites.dao.mappers.DomainMapper;
 import ru.projects.favourites.domain.DomainObject;
+import ru.projects.favourites.domain.EntityType;
 import ru.projects.favourites.domain.Favourite;
 import ru.projects.favourites.domain.User;
 
 @Service
-public class DomainOperationsImpl implements DomainOperations<DomainObject> {
+public class DomainOperationsImpl implements DomainOperations {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	@Resource(name = "userMapper")
-	private DomainMapper<User> userMapper;
+	private RowMapper<User> userMapper;
 
 	@Resource(name = "favouriteMapper")
-	private DomainMapper<Favourite> favouriteMapper;
+	private RowMapper<Favourite> favouriteMapper;
+
+	@Resource(name = "userMapper")
+	private ResultSetExtractor<User> userExtractor;
+
+	@Resource(name = "favouriteMapper")
+	private ResultSetExtractor<Favourite> favouriteExtractor;
 
 	@Autowired
 	private Queries queries;
@@ -57,24 +65,26 @@ public class DomainOperationsImpl implements DomainOperations<DomainObject> {
 				ps.setDate(3, java.sql.Date.valueOf(user.getRegDate()));
 				ps.setString(4, user.getPassword());
 				ps.setTimestamp(5, user.getDeletingDT() == null ? null : Timestamp.valueOf(user.getDeletingDT()));
+				ps.setTimestamp(6, user.getLastLoggedDT() == null ? null : Timestamp.valueOf(user.getLastLoggedDT()));
 			});
 		}
 	}
 
 	@Override
-	public void update(DomainObject domain, String field, Object fieldValue) {
-		jdbcTemplate.update(queries.getUpdateQuery(domain, field), ps -> paramTypeSetter(ps, fieldValue, 1));
+	public void update(EntityType entityType, String field, Object fieldValue) {
+		jdbcTemplate.update(queries.getUpdateQuery(entityType, field), ps -> paramTypeSetter(ps, fieldValue, 1));
 
 	}
 
 	@Override
 	public boolean remove(DomainObject entity) {
-		return jdbcTemplate.update(queries.getDeleteQuery(entity), ps -> ps.setString(1, entity.getUID())) > 0;
+		return jdbcTemplate.update(queries.getDeleteQuery(EntityType.value(entity.getEntityName())),
+				ps -> ps.setString(1, entity.getUID())) > 0;
 	}
 
 	@Override
-	public boolean remove(String entityType, String key) {
-		return jdbcTemplate.update(queries.getDeleteQuery(entityType), ps -> ps.setString(1, key)) > 0;
+	public boolean remove(EntityType entityType, String key) {
+		return jdbcTemplate.update(queries.getDeleteQuery(entityType.getName()), ps -> ps.setString(1, key)) > 0;
 	}
 
 	@Override
@@ -83,10 +93,13 @@ public class DomainOperationsImpl implements DomainOperations<DomainObject> {
 				favouriteMapper);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public DomainObject findById(boolean isFavourite, String uid) {
-		// TODO
-		return null;
+	public DomainObject findById(EntityType entityType, String uid) {
+		if (entityType == EntityType.FAVOURITE)
+			return jdbcTemplate.query(queries.getFindQuery(entityType), new Object[] { uid }, favouriteExtractor);
+		else
+			return jdbcTemplate.query(queries.getFindQuery(entityType), new Object[] { uid }, userExtractor);
 	}
 
 	private void paramTypeSetter(PreparedStatement ps, Object value, int position) {

@@ -1,5 +1,9 @@
 package ru.projects.favourites.user;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import ru.projects.favourites.domain.User;
 
 /**
@@ -19,5 +23,7 @@ public interface CurrentUser {
 	 * @see User
 	 * @return возвращает имя текущего пользователя; не может быть {@code null}.
 	 */
+	@NotNull
+	@NotEmpty
 	String getUsername();
 }

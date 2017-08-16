@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import ru.projects.favourites.dao.DomainOperations;
-import ru.projects.favourites.domain.DomainObject;
+import ru.projects.favourites.domain.EntityType;
 import ru.projects.favourites.domain.Favourite;
 import ru.projects.favourites.rest.resources.DomainResource;
 import ru.projects.favourites.rest.resources.FavouriteResource;
@@ -16,22 +18,25 @@ import ru.projects.favourites.rest.resources.FavouriteResource;
 public class RESTOperationsImpl implements RESTOperations {
 
 	@Autowired
-	private DomainOperations<? extends DomainObject> domainOperations;
-
-	@Override
-	public DomainResource readById(String id, String entityType) {
-		return null; // TODO
-	}
+	private DomainOperations domainOperations;
 
 	@Override
 	public List<DomainResource> readAll(String entityType, String username) {
+		if (EntityType.value(entityType) != EntityType.FAVOURITE)
+			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+
 		return domainOperations.findAll(username).stream().map(fv -> new FavouriteResource((Favourite) fv))
 				.collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public void create(String entityType, DomainResource resource, String username) {
 		domainOperations.save(resource.convertToDomainObject(true, username));
+	}
+
+	@Override
+	public void delete(String entityType, String uid) {
+		domainOperations.remove(EntityType.value(entityType), uid);
 	}
 
 	@Override
@@ -42,8 +47,8 @@ public class RESTOperationsImpl implements RESTOperations {
 	}
 
 	@Override
-	public void delete(String entityType, String uid) {
-		domainOperations.remove(entityType, uid);
+	public DomainResource readById(String id, String entityType) {
+		return DomainResource.convertToResource(domainOperations.findById(EntityType.value(entityType), id));
 	}
 
 }

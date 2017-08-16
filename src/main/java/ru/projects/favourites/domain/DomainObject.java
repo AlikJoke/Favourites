@@ -3,14 +3,28 @@ package ru.projects.favourites.domain;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+/**
+ * Абстрактный класс, содержащий общую информацию для доменных объектов системы.
+ * Наследники: {@link User}, {@link Favourite}.
+ * 
+ * @author Alimurad A. Ramazanov
+ * @since 15.08.2017
+ * @version 1.0.0
+ *
+ */
 public abstract class DomainObject {
 
 	private boolean isNew;
 	private boolean isDeleted;
+
+	@Null
 	private LocalDateTime deletingDT;
+
+	@NotNull
 	protected String uid;
 
 	protected DomainObject(String uid, LocalDateTime deletingDT) {
@@ -42,8 +56,23 @@ public abstract class DomainObject {
 		this(Integer.toString(uid));
 	}
 
+	/**
+	 * Возвращает уникальный идентификатор объекта.
+	 * <p>
+	 * 
+	 * @return не может быть {@code null}.
+	 */
+	@NotNull
+	@NotEmpty
 	public abstract String getUID();
-	
+
+	/**
+	 * Возвращает тип объекта.
+	 * <p>
+	 * 
+	 * @return не может быть {@code null}.
+	 */
+	@NotNull
 	public abstract String getEntityName();
 
 	public boolean isNew() {

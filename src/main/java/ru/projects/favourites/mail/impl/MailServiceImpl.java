@@ -46,11 +46,20 @@ public class MailServiceImpl implements MailService {
 		}
 	}
 
+	/**
+	 * Класс, описывающий свойства, необходимые для отправки сообщения через
+	 * smtp-сервер.
+	 * 
+	 * @author Alimurad A. Ramazanov
+	 * @since 16.08.2017
+	 * @version 1.0.0
+	 *
+	 */
 	@Configurable
 	static class MailProperties extends Properties {
 
 		private static final long serialVersionUID = -146992741616212941L;
-		
+
 		static final String MAIL_SMTP_HOST = "mail.smtp.host";
 		static final String MAIL_SMTP_SF_PORT = "mail.smtp.socketFactory.port";
 		static final String MAIL_SMTP_SF_CLASS = "mail.smtp.socketFactory.class";
