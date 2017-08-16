@@ -38,4 +38,10 @@ public class MySQLQueries implements Queries {
 		return null;
 	}
 
+	@Override
+	public String getDeleteQuery(String entityType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

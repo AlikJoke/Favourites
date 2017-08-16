@@ -73,6 +73,11 @@ public class DomainOperationsImpl implements DomainOperations<DomainObject> {
 	}
 
 	@Override
+	public boolean remove(String entityType, String key) {
+		return jdbcTemplate.update(queries.getDeleteQuery(entityType), ps -> ps.setString(1, key)) > 0;
+	}
+
+	@Override
 	public List<? extends DomainObject> findAll(String username) {
 		return jdbcTemplate.query(queries.getFavouriteQueries().getFindAllFavouritesQuery(), new Object[] { username },
 				favouriteMapper);

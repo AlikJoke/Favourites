@@ -11,11 +11,13 @@ import ru.projects.favourites.domain.DomainObject;
 
 public interface DomainOperations<T extends DomainObject> {
 
-	void save(@NotNull T domain);
+	void save(@NotNull DomainObject domainObject);
 
 	void update(@NotNull T domain, @NotNull @NotEmpty String field, @NotNull Object fieldValue);
 
 	boolean remove(@NotNull T entity);
+	
+	boolean remove(@NotNull String entityType, @NotNull String key);
 
 	@Null
 	T findById(boolean isFavourite, @NotNull String uid);

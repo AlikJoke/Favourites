@@ -81,10 +81,19 @@ public class PostgreSQLQueries implements Queries {
 			return sourceQuery.replace(TABLE_NAME_PLACEHOLDER, domain.getEntityName());
 		}
 
+		static String replaceDeleteByIdPlaceholders(String entityType, String sourceQuery) {
+			return sourceQuery.replace(TABLE_NAME_PLACEHOLDER, entityType);
+		}
+
 		static String replaceUpdatePlaceholders(DomainObject domain, String columnName, String sourceQuery) {
 			return sourceQuery.replace(TABLE_NAME_PLACEHOLDER, domain.getEntityName()).replace(COLUMN_NAME_PLACEHOLDER,
 					columnName);
 		}
+	}
+
+	@Override
+	public String getDeleteQuery(String entityType) {
+		return Patterns.replaceDeleteByIdPlaceholders(entityType, Patterns.DELETE_QUERY);
 	}
 
 }

@@ -7,8 +7,18 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize.Inclusion;
 
+import ru.projects.favourites.domain.DomainObject;
+import ru.projects.favourites.domain.Favourite;
+
+@SuppressWarnings("deprecation")
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(include = Inclusion.NON_NULL)
 public class FavouriteResource extends DomainResource {
 
 	private static final long serialVersionUID = 7969317377676043228L;
@@ -43,6 +53,15 @@ public class FavouriteResource extends DomainResource {
 		this.counter = counter;
 	}
 
+	public FavouriteResource(Favourite fv) {
+		super(fv);
+		this.name = fv.getName();
+		this.addingDT = fv.getAddingDT();
+		this.link = fv.getLink();
+		this.order = fv.getOrder();
+		this.counter = fv.getCounter();
+	}
+
 	@JsonProperty("name")
 	public String getName() {
 		return this.name;
@@ -66,6 +85,17 @@ public class FavouriteResource extends DomainResource {
 	@JsonProperty("counter")
 	public Long getCounter() {
 		return this.counter;
+	}
+
+	@JsonIgnore
+	@Override
+	public DomainObject convertToDomainObject(boolean isNew, String username) {
+		final Favourite fv;
+		if (isNew)
+			fv = new Favourite(this.link, this.name, null);
+		else
+			fv = new Favourite(this.name, this.link, getUID(), username, this.addingDT, getDeletingDT());
+		return fv;
 	}
 
 }

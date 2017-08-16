@@ -13,6 +13,10 @@ public interface Queries {
 	@NotNull
 	@NotEmpty
 	String getDeleteQuery(@NotNull DomainObject domain);
+	
+	@NotNull
+	@NotEmpty
+	String getDeleteQuery(@NotNull String entityType);
 
 	@NotNull
 	@NotEmpty

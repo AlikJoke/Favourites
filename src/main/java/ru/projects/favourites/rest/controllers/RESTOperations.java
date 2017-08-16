@@ -15,6 +15,11 @@ public interface RESTOperations {
 	@Null
 	DomainResource readById(@NotNull String id, @NotNull String entityType);
 
+	/**
+	 * <b>Только для избранных. Не для списка пользователей.</b>
+	 * @param entityType
+	 * @return
+	 */
 	@NotNull
 	List<DomainResource> readAll(@NotNull String entityType);
 
