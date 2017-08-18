@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -15,9 +16,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 import ru.projects.favourites.dao.DomainOperations;
 import ru.projects.favourites.dao.Queries;
+import ru.projects.favourites.dao.mappers.DomainMapper;
+import ru.projects.favourites.dao.mappers.FavouriteMapper;
+import ru.projects.favourites.dao.mappers.UserMapper;
 import ru.projects.favourites.domain.DomainObject;
 import ru.projects.favourites.domain.EntityType;
 import ru.projects.favourites.domain.Favourite;
@@ -45,6 +54,7 @@ public class DomainOperationsImpl implements DomainOperations {
 	private Queries queries;
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void save(DomainObject domain) {
 		if (domain instanceof Favourite) {
 			Favourite fv = (Favourite) domain;
@@ -71,18 +81,68 @@ public class DomainOperationsImpl implements DomainOperations {
 	}
 
 	@Override
-	public void update(EntityType entityType, String field, Object fieldValue) {
-		jdbcTemplate.update(queries.getUpdateQuery(entityType, field), ps -> paramTypeSetter(ps, fieldValue, 1));
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void update(EntityType entityType, DomainObject current) {
+		if (current.isNew())
+			throw new IllegalStateException();
+
+		Map<String, Object> fields = Maps.newHashMap();
+
+		DomainObject old = this.findById(entityType, current.getUID());
+
+		if (!Objects.equal(old.getDeletingDT(), current.getDeletingDT()))
+			fields.put(DomainMapper.DELETING_DT_FIELD, current.getDeletingDT());
+
+		switch (entityType) {
+		case USER:
+			User oldUser = (User) old;
+			User currentUser = (User) current;
+
+			if (!Objects.equal(oldUser.getEmail(), currentUser.getEmail()))
+				fields.put(UserMapper.EMAIL_FIELD, currentUser.getEmail());
+
+			if (!Objects.equal(oldUser.getLastLoggedDT(), currentUser.getLastLoggedDT()))
+				fields.put(UserMapper.LAST_LOGGED_FIELD, currentUser.getLastLoggedDT());
+
+			if (!Objects.equal(oldUser.getPassword(), currentUser.getPassword()))
+				fields.put(UserMapper.PASSWORD_FIELD, currentUser.getPassword());
+
+			break;
+		case FAVOURITE:
+			Favourite oldFv = (Favourite) old;
+			Favourite currentFv = (Favourite) current;
+
+			if (!Objects.equal(oldFv.getCounter(), currentFv.getCounter()))
+				fields.put(FavouriteMapper.COUNTER_FIELD, currentFv.getCounter());
+
+			if (!Objects.equal(oldFv.getOrder(), currentFv.getOrder()))
+				fields.put(FavouriteMapper.ORDER_FIELD, currentFv.getOrder());
+
+			if (!Objects.equal(oldFv.getName(), currentFv.getName()))
+				fields.put(FavouriteMapper.NAME_FIELD, currentFv.getName());
+
+			if (!Objects.equal(oldFv.getLink(), currentFv.getLink()))
+				fields.put(FavouriteMapper.LINK_FIELD, currentFv.getLink());
+
+			break;
+		default:
+			throw new IllegalArgumentException();
+		}
+
+		fields.entrySet().forEach(entry -> jdbcTemplate.update(queries.getUpdateQuery(entityType, entry.getKey()),
+				ps -> paramTypeSetter(ps, entry.getValue(), 1)));
 
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean remove(DomainObject entity) {
 		return jdbcTemplate.update(queries.getDeleteQuery(EntityType.value(entity.getEntityName())),
 				ps -> ps.setString(1, entity.getUID())) > 0;
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean remove(EntityType entityType, String key) {
 		return jdbcTemplate.update(queries.getDeleteQuery(entityType.getName()), ps -> ps.setString(1, key)) > 0;
 	}

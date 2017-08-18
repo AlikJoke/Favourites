@@ -45,6 +45,7 @@ public class Favourite extends DomainObject {
 	public Favourite(String uid, String username, LocalDateTime addingDT, LocalDateTime deletingDT) {
 		super(uid, deletingDT);
 		this.addingDT = addingDT;
+		this.userName = username;
 	}
 
 	public Favourite(String name, String link, String uid, String username, LocalDateTime addingDT,

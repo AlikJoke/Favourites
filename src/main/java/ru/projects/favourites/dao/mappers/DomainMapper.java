@@ -10,8 +10,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 public abstract class DomainMapper<T> implements RowMapper<T>, ResultSetExtractor<T> {
 
-	protected static final String UID_FIELD = "uid";
-	protected static final String DELETING_DT_FIELD = "deletingDT";
+	public static final String UID_FIELD = "uid";
+	public static final String DELETING_DT_FIELD = "deletingDT";
 
 	@Null
 	protected final LocalDateTime getLocalDateTimeValue(@Null Timestamp value) {

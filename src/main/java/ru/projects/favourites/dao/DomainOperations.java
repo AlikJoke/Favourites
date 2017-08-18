@@ -40,14 +40,13 @@ public interface DomainOperations {
 	 * <p>
 	 * 
 	 * @see DomainObject
-	 * @param field
-	 *            - имя поля в БД для обновления; не может быть {@code null}.
-	 * @param fieldValue
-	 *            - значение поля для обновления; может быть {@code null}.
+	 * @param current
+	 *            - новая версия объекта для обновления; не может быть
+	 *            {@code null}.
 	 * @param entityType
 	 *            - тип объекта для сохранения; не может быть {@code null}.
 	 */
-	void update(@NotNull EntityType entityType, @NotNull @NotEmpty String field, @Null Object fieldValue);
+	void update(@NotNull EntityType entityType, @NotNull DomainObject current);
 
 	/**
 	 * Удаление объекта из приложения.

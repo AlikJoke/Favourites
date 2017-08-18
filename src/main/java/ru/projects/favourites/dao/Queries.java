@@ -8,6 +8,15 @@ import ru.projects.favourites.domain.EntityType;
 import ru.projects.favourites.domain.Favourite;
 import ru.projects.favourites.domain.User;
 
+/**
+ * Сервис построения SQL-запросов для различных операций с сущностями (DML) и
+ * построения схемы (DDL).
+ * 
+ * @author Alimurad A. Ramazanov
+ * @since 15.08.2017
+ * @version 1.0.1* 
+ *
+ */
 public interface Queries {
 
 	@NotNull

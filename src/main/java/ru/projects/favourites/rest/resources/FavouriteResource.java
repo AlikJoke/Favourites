@@ -92,7 +92,7 @@ public class FavouriteResource extends DomainResource {
 	public DomainObject convertToDomainObject(boolean isNew, String username) {
 		final Favourite fv;
 		if (isNew)
-			fv = new Favourite(this.link, this.name, null);
+			fv = new Favourite(this.link, this.name, username);
 		else
 			fv = new Favourite(this.name, this.link, getUID(), username, this.addingDT, getDeletingDT());
 		return fv;

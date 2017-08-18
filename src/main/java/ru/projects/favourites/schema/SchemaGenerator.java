@@ -7,6 +7,8 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import ru.projects.favourites.dao.Queries;
 import ru.projects.favourites.domain.EntityType;
@@ -40,6 +42,7 @@ public class SchemaGenerator {
 		this.generateSchemaIfNotExists();
 	}
 
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void generateSchemaIfNotExists() {
 		Boolean userExists = jdbcTemplate.queryForObject(queries.getSchemaBuilder().checkTableExistsQuery(),
 				Boolean.class, new Object[] { EntityType.USER.getName() });

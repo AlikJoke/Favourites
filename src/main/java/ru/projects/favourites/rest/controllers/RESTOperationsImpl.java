@@ -41,9 +41,8 @@ public class RESTOperationsImpl implements RESTOperations {
 
 	@Override
 	public DomainResource update(String entityType, DomainResource resource) {
-		// TODO domainOperations.update(resource, field, fieldValue);
-
-		return resource;
+		domainOperations.update(EntityType.value(entityType), resource.convertToDomainObject(false, null));
+		return this.readById(resource.getUID(), entityType);
 	}
 
 	@Override
