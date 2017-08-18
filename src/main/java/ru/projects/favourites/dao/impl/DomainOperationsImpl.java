@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ import ru.projects.favourites.domain.Favourite;
 import ru.projects.favourites.domain.User;
 
 @Service
+@Repository
 public class DomainOperationsImpl implements DomainOperations {
 
 	@Autowired
@@ -181,5 +183,11 @@ public class DomainOperationsImpl implements DomainOperations {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public List<User> findUsers(LocalDateTime lastLogged) {
+		return jdbcTemplate.query(queries.getUserQueries().getFindUsersByLoggedDT(),
+				new Object[] { Timestamp.valueOf(lastLogged) }, userMapper);
 	}
 }

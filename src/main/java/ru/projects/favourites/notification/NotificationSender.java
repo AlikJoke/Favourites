@@ -1,5 +1,9 @@
 package ru.projects.favourites.notification;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Email;
+
 import ru.projects.favourites.mail.MailService;
 
 /**
@@ -18,9 +22,18 @@ public interface NotificationSender {
 	 * Осуществляет отправку сообщения об успешной регистрации в приложении.
 	 * <p>
 	 * 
+	 * @param email
+	 *            - адрес почты, на который будет отправлено уведомление; не
+	 *            может быть {@code null}.
+	 * @param username
+	 *            - имя пользователя (логин); не может быть {@code null}.
+	 * @param password
+	 *            - пароль пользователя; не может быть {@code null}.
+	 * 
 	 * @see {@linkplain MailService#send(String, String, String)}.
 	 */
-	void successRegistrationNotificationSend();
+	void successRegistrationNotificationSend(@NotNull @Email String email, @NotNull String username,
+			@NotNull String password);
 
 	/**
 	 * Осуществляет отправку сообщения при отсутствии логина в системе в течении

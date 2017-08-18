@@ -1,15 +1,18 @@
 package ru.projects.favourites.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
+import javax.validation.constraints.Past;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 import ru.projects.favourites.dao.impl.DomainOperationsImpl;
 import ru.projects.favourites.domain.DomainObject;
 import ru.projects.favourites.domain.EntityType;
+import ru.projects.favourites.domain.User;
 
 /**
  * Интерфейс доступа к операциям с БД.
@@ -90,7 +93,7 @@ public interface DomainOperations {
 	<T extends DomainObject> T findById(@NotNull EntityType entityType, @NotNull String uid);
 
 	/**
-	 * Метод для получения списка всех объектов.
+	 * Метод для получения списка всех объектов избранных.
 	 * <p>
 	 * 
 	 * @param username
@@ -100,4 +103,16 @@ public interface DomainOperations {
 	 */
 	@NotNull
 	List<? extends DomainObject> findAll(@NotNull @NotEmpty String username);
+
+	/**
+	 * Метод для получения списка пользователей, у которых время последнего
+	 * логина было до указанной даты.
+	 * <p>
+	 * 
+	 * @param lastLoggedDT
+	 *            - время последнего логина; не может быть {@code null}.
+	 * @return не может быть {@code null}.
+	 */
+	@NotNull
+	List<User> findUsers(@NotNull @Past LocalDateTime lastLogged);
 }

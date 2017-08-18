@@ -61,6 +61,10 @@ public interface Queries {
 		@NotNull
 		@NotEmpty
 		String getFindAllUsersQuery();
+		
+		@NotNull
+		@NotEmpty
+		String getFindUsersByLoggedDT();
 	}
 
 	@NotNull
