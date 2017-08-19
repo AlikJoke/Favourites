@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -35,14 +36,13 @@ public class UserResource extends DomainResource {
 	private final String password;
 
 	@NotNull
-	private final LocalDateTime lastLogged;
+	private LocalDateTime lastLogged;
 
 	@JsonCreator
 	public UserResource(@JsonProperty("uid") String uid, @JsonProperty("deletingDT") LocalDateTime deletingDT,
-			@JsonProperty("isDeleted") boolean isDeleted, @JsonProperty("email") String email,
-			@JsonProperty("lastLogged") LocalDateTime lastLogged, @JsonProperty("regDate") LocalDate regDate,
-			@JsonProperty("password") String password) {
-		super(uid, deletingDT, isDeleted);
+			@JsonProperty("email") String email, @JsonProperty("lastLogged") LocalDateTime lastLogged,
+			@JsonProperty("regDate") LocalDate regDate, @JsonProperty("password") String password) {
+		super(uid, deletingDT, deletingDT != null);
 		this.email = email;
 		this.regDate = regDate;
 		this.password = password;
@@ -70,6 +70,15 @@ public class UserResource extends DomainResource {
 	@JsonProperty("lastLogged")
 	public LocalDateTime getLastLogged() {
 		return this.lastLogged;
+	}
+
+	@JsonIgnore
+	public String getPassword() {
+		return this.password;
+	}
+	
+	public void loggingLogin() {
+		this.lastLogged = LocalDateTime.now();
 	}
 
 	@Override

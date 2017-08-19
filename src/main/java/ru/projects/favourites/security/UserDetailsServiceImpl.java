@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = domainOperations.findById(EntityType.USER, username);
 		if (user == null)
-			throw new UsernameNotFoundException(username);
+			throw new UsernameNotFoundException(String.format("Not found user with username '%s'", username));
 
 		return new org.springframework.security.core.userdetails.User(username, user.getPassword(),
 				Collections.unmodifiableCollection(authorities));

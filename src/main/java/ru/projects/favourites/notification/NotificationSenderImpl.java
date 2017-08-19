@@ -35,7 +35,7 @@ public class NotificationSenderImpl implements NotificationSender {
 
 		static final String SUCCESS_REG_SUBJECT = "Success registration in application";
 		static final String SUCCESS_REG_TEXT = "You're successfully registered in application! /n Your login is '%s', password is '%s'.";
-		static final String DAILY_CRON_EXPRESSION = "0 0 12 1/1 * ? *";
+		static final String DAILY_CRON_EXPRESSION = "0 0 12 1/1 * ?";
 		static final String ABSENT_SUBJECT = "Visit our application again!";
 		static final String ABSENT_TEXT = "We miss you, %s!";
 	}

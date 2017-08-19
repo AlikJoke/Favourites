@@ -58,6 +58,9 @@ public class DomainOperationsImpl implements DomainOperations {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void save(DomainObject domain) {
+		if (findById(EntityType.value(domain.getEntityName()), domain.getUID()) != null)
+			throw new IllegalStateException("Entity with the same identifier already exists! Please, try another!");
+
 		if (domain instanceof Favourite) {
 			Favourite fv = (Favourite) domain;
 			jdbcTemplate.update(queries.getFavouriteQueries().getInsertFavouriteQuery(fv), ps -> {

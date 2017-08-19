@@ -23,7 +23,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().and().formLogin().loginPage("/login").failureUrl("/login?error")
+		http.csrf().disable().authorizeRequests()
+				.antMatchers("/VAADIN/**", "/login", "/login/**", "/error/**", "/accessDenied/**", "/vaadinServlet/**")
+				.permitAll().and().formLogin().loginPage("/login").failureUrl("/login?error")
 				.usernameParameter("username").permitAll().and().logout().logoutUrl("/logout")
 				.deleteCookies("remember-me").logoutSuccessUrl("/").permitAll().and().rememberMe();
 	}
