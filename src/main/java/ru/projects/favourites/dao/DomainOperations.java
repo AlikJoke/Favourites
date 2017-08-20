@@ -105,6 +105,21 @@ public interface DomainOperations {
 	List<? extends DomainObject> findAll(@NotNull @NotEmpty String username);
 
 	/**
+	 * Метод для получения списка всех объектов избранных, удовлетворяющих
+	 * строке фильтра.
+	 * <p>
+	 * 
+	 * @param username
+	 *            - имя пользователя, для которого происходит поиск; не может
+	 *            быть {@code null}.
+	 * @param filteringValue
+	 *            - строка фильтра; не может быть {@code null}.
+	 * @return не может быть {@code null}.
+	 */
+	@NotNull
+	List<? extends DomainObject> findWithFilter(@NotNull @NotEmpty String username, @NotNull String filteringValue);
+
+	/**
 	 * Метод для получения списка пользователей, у которых время последнего
 	 * логина было до указанной даты.
 	 * <p>

@@ -16,19 +16,20 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
+import ru.projects.favourites.notification.NotificationSender;
 import ru.projects.favourites.rest.resources.UserResource;
 import ru.projects.favourites.security.SecurityReference;
 
 @SpringUI(path = RegisterUI.PATH)
-@Theme(LoginUI.THEME_NAME)
-@Title(LoginUI.TITLE_UI)
+@Theme(ValoTheme.THEME_NAME)
+@Title(RegisterUI.TITLE_UI)
 public class RegisterUI extends UI implements UIExceptionConfigurer {
 
 	private static final long serialVersionUID = 5838428951413137884L;
 
-	final static String PATH = "/favourites/register";
-	final static String THEME_NAME = "valo";
+	final static String PATH = "/ui/register";
 	final static String TITLE_UI = "Create account";
 
 	private TextField username;
@@ -40,6 +41,9 @@ public class RegisterUI extends UI implements UIExceptionConfigurer {
 
 	@Autowired
 	private SecurityReference security;
+
+	@Autowired
+	private NotificationSender sender;
 
 	public RegisterUI() {
 		super();
@@ -63,7 +67,11 @@ public class RegisterUI extends UI implements UIExceptionConfigurer {
 		this.password.setPlaceholder("Enter you password");
 
 		this.backToLoginBtn.addClickListener(click -> getUI().getPage().setLocation(LoginUI.PATH));
-		this.createAccountBtn.addClickListener(click -> security.create(validateAndCreate()));
+		this.createAccountBtn.addClickListener(click -> {
+			security.create(validateAndCreate());
+			sender.successRegistrationNotificationSend(this.email.getValue(), this.username.getValue(),
+					this.password.getValue());
+		});
 
 		content.addComponent(this.backToLoginBtn);
 		content.addComponent(this.username);

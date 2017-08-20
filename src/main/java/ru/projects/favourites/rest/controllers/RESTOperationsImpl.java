@@ -11,19 +11,14 @@ import org.springframework.web.client.HttpClientErrorException;
 import ru.projects.favourites.dao.DomainOperations;
 import ru.projects.favourites.domain.EntityType;
 import ru.projects.favourites.domain.Favourite;
-import ru.projects.favourites.notification.NotificationSender;
 import ru.projects.favourites.rest.resources.DomainResource;
 import ru.projects.favourites.rest.resources.FavouriteResource;
-import ru.projects.favourites.rest.resources.UserResource;
 
 @Service
 public class RESTOperationsImpl implements RESTOperations {
 
 	@Autowired
 	private DomainOperations domainOperations;
-	
-	@Autowired
-	private NotificationSender sender;
 
 	@Override
 	public List<DomainResource> readAll(String entityType, String username) {
@@ -37,11 +32,6 @@ public class RESTOperationsImpl implements RESTOperations {
 	@Override
 	public void create(String entityType, DomainResource resource, String username) {	
 		domainOperations.save(resource.convertToDomainObject(true, username));
-		
-		if (EntityType.value(entityType) == EntityType.USER) {
-			UserResource user = (UserResource) resource;
-			sender.successRegistrationNotificationSend(user.getEmail(), username, user.getPassword());
-		}
 	}
 
 	@Override

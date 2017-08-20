@@ -50,6 +50,11 @@ public class PostgreSQLQueries implements Queries {
 				return Patterns.FIND_FAVOURITES_QUERY;
 			}
 
+			@Override
+			public String getFindWithFilterFavouritesQuery(String filterValue) {
+				return Patterns.replaceFilterPlaceholders(Patterns.FIND_FILTER_FAVOURITES_QUERY, filterValue);
+			}
+
 		};
 	}
 
@@ -79,17 +84,19 @@ public class PostgreSQLQueries implements Queries {
 
 		static final String TABLE_NAME_PLACEHOLDER = "<tableName>";
 		static final String COLUMN_NAME_PLACEHOLDER = "<columnName>";
+		static final String SEARCH_FILTER_PLACEHOLDER = "<searchFilter>";
 
-		static final String DELETE_QUERY = "DELETE FROM <tableName> WHERE uid = ?";
+		static final String DELETE_QUERY = "UPDATE <tableName> SET deletingDT = ? WHERE uid = ?";
 		static final String FIND_QUERY = "SELECT * FROM <tableName> WHERE uid = ?";
 		static final String INSERT_FAVOURITE_QUERY = "INSERT INTO favourite (uid, name, link, addingDT, deletingDT, order_fv, counter, username) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		static final String INSERT_USER_QUERY = "INSERT INTO user_t (username, email, regDT, password, deletingDT, lastLogged) "
 				+ "VALUES (?, ?, ?, ?, ?, ?);";
 		static final String UPDATE_QUERY = "UPDATE <tableName> SET <columnName> = ?";
-		static final String FIND_FAVOURITES_QUERY = "SELECT * FROM favourite WHERE username = ?";
+		static final String FIND_FAVOURITES_QUERY = "SELECT * FROM favourite WHERE username = ? and deletingDT IS NULL ORDER BY order_fv";
+		static final String FIND_FILTER_FAVOURITES_QUERY = "SELECT * FROM favourite WHERE username = ? and deletingDT IS NULL and (name like '%<searchFilter>%' or link like '%<searchFilter>%') ORDER BY order_fv";
 		static final String FIND_USERS_QUERY = "SELECT * FROM user";
-		static final String FIND_USERS_QUERY_BY_LOGGED_DT = "SELECT * FROM user WHERE lastLogged < ?";
+		static final String FIND_USERS_QUERY_BY_LOGGED_DT = "SELECT * FROM user WHERE lastLogged < ? and deletingDT IS NULL";
 		static final String CHECK_TABLE = "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = ?)";
 		static final String CREATE_FV_TABLE = "CREATE TABLE IF NOT EXISTS FAVOURITE (UID varchar(64) NOT NULL, NAME varchar(256) NOT NULL, "
 				+ "LINK varchar(512) NOT NULL, ADDING_DT timestamp NOT NULL, DELETING_DT timestamp NULL, ORDER_FV int NOT NULL, COUNTER int NOT NULL, "
@@ -105,6 +112,10 @@ public class PostgreSQLQueries implements Queries {
 
 		static String replacePlaceholders(EntityType entityType, String sourceQuery) {
 			return sourceQuery.replace(TABLE_NAME_PLACEHOLDER, entityType.getName());
+		}
+
+		static String replaceFilterPlaceholders(String sourceQuery, String filterValue) {
+			return sourceQuery.replaceAll(SEARCH_FILTER_PLACEHOLDER, filterValue);
 		}
 
 		static String replaceDeleteByIdPlaceholders(String entityType, String sourceQuery) {

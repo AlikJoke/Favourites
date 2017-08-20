@@ -36,6 +36,21 @@ public interface NotificationSender {
 			@NotNull String password);
 
 	/**
+	 * Осуществляет отправку сообщения, содержащего данные о параметрах доступа
+	 * к приложению для пользователя.
+	 * <p>
+	 * 
+	 * @param email
+	 *            - адрес почты, на который будет отправлено уведомление; не
+	 *            может быть {@code null}.
+	 * @param username
+	 *            - имя пользователя (логин); не может быть {@code null}.
+	 * 
+	 * @see {@linkplain MailService#send(String, String, String)}.
+	 */
+	void rememberPasswordSend(@NotNull @Email String email, @NotNull String username);
+
+	/**
 	 * Осуществляет отправку сообщения при отсутствии логина в системе в течении
 	 * недели. Запускается по расписанию.
 	 * <p>

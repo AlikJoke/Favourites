@@ -142,20 +142,28 @@ public class DomainOperationsImpl implements DomainOperations {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean remove(DomainObject entity) {
-		return jdbcTemplate.update(queries.getDeleteQuery(EntityType.value(entity.getEntityName())),
-				ps -> ps.setString(1, entity.getUID())) > 0;
+		return remove(EntityType.value(entity.getEntityName()), entity.getUID());
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public boolean remove(EntityType entityType, String key) {
-		return jdbcTemplate.update(queries.getDeleteQuery(entityType.getName()), ps -> ps.setString(1, key)) > 0;
+		return jdbcTemplate.update(queries.getDeleteQuery(entityType.getName()), ps -> {
+			ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+			ps.setString(2, key);
+		}) > 0;
 	}
 
 	@Override
 	public List<? extends DomainObject> findAll(String username) {
 		return jdbcTemplate.query(queries.getFavouriteQueries().getFindAllFavouritesQuery(), new Object[] { username },
 				favouriteMapper);
+	}
+
+	@Override
+	public List<? extends DomainObject> findWithFilter(String username, String filterValue) {
+		return jdbcTemplate.query(queries.getFavouriteQueries().getFindWithFilterFavouritesQuery(filterValue),
+				new Object[] { username }, favouriteMapper);
 	}
 
 	@SuppressWarnings("unchecked")

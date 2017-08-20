@@ -47,6 +47,10 @@ public interface Queries {
 		@NotNull
 		@NotEmpty
 		String getFindAllFavouritesQuery();
+		
+		@NotNull
+		@NotEmpty
+		String getFindWithFilterFavouritesQuery(@NotNull String filterValue);
 	}
 
 	@NotNull
