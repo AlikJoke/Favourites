@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import com.google.common.collect.Maps;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Alignment;
@@ -18,13 +19,13 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.SelectionMode;
-import com.vaadin.ui.themes.ValoTheme;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 
 import ru.projects.favourites.dao.DomainOperations;
 import ru.projects.favourites.domain.EntityType;
@@ -32,6 +33,7 @@ import ru.projects.favourites.domain.Favourite;
 import ru.projects.favourites.security.SecurityReference;
 import ru.projects.favourites.user.CurrentUser;
 
+@SuppressWarnings("deprecation")
 @SpringUI(path = FavouritesUI.PATH)
 @Theme(ValoTheme.THEME_NAME)
 @Title(FavouritesUI.TITLE_UI)
@@ -47,6 +49,9 @@ public class FavouritesUI extends UI implements UIExceptionConfigurer {
 
 	@Autowired
 	private SecurityReference security;
+	
+	@Autowired
+	private FavouritesEditor fvEditor;
 
 	final static String PATH = "/ui/list";
 	final static String TITLE_UI = "Favourites";
@@ -77,10 +82,10 @@ public class FavouritesUI extends UI implements UIExceptionConfigurer {
 		this.loginInfo = new HorizontalLayout();
 		this.buttons = new HorizontalLayout();
 		this.logoutBtn = new Button("Logout");
-		this.addBtn = new Button("Add");
+		this.addBtn = new Button("Add", FontAwesome.PLUS);
 		this.label = new Label("List of favourites pages");
 		this.labelLogin = new Label("Login as ");
-		this.deleteBtn = new Button("Delete");
+		this.deleteBtn = new Button("Delete", FontAwesome.MINUS);
 		this.searchField = new TextField("Filter");
 	}
 
@@ -135,6 +140,7 @@ public class FavouritesUI extends UI implements UIExceptionConfigurer {
 		content.addComponent(loginInfo);
 		content.addComponent(label);
 		content.addComponent(buttons);
+		content.addComponent(fvEditor);
 		content.addComponent(fvGrid);
 
 		content.setComponentAlignment(this.loginInfo, Alignment.TOP_RIGHT);
