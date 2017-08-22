@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,7 +24,10 @@ import ru.projects.favourites.dao.impl.PostgreSQLQueries;
 @EnableAutoConfiguration
 @EnableTransactionManagement
 @EnableScheduling
-@PropertySource(value = { "classpath:application.properties" })
+@PropertySources({ 
+    @PropertySource(value = "classpath:application.properties"),
+    @PropertySource(value = "file:${properties.path}/application.properties", ignoreResourceNotFound = true) 
+})
 public class DbConfiguration {
 
 	@Autowired

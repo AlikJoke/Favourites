@@ -4,6 +4,8 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -26,6 +28,8 @@ import ru.projects.favourites.domain.EntityType;
 @Component
 public class SchemaGenerator {
 
+	private final static Logger logger = LoggerFactory.getLogger(SchemaGenerator.class);
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -44,10 +48,15 @@ public class SchemaGenerator {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	private void generateSchemaIfNotExists() {
+		logger.info("Started schema generation...");
+
 		Boolean userExists = jdbcTemplate.queryForObject(queries.getSchemaBuilder().checkTableExistsQuery(),
 				Boolean.class, new Object[] { EntityType.USER.getName() });
 		if (!userExists) {
+			logger.info("User table would be created...");
 			jdbcTemplate.execute(queries.getSchemaBuilder().getQueryToCreateTableUsers());
+
+			logger.info("Indexes for user table would be created...");
 			Stream.of(USER_INDEXED_COLUMNS).forEach(columnName -> jdbcTemplate
 					.execute(queries.getSchemaBuilder().getQueryToCreateIndex(EntityType.USER.getName(), columnName)));
 		}
@@ -55,10 +64,16 @@ public class SchemaGenerator {
 		Boolean fvExists = jdbcTemplate.queryForObject(queries.getSchemaBuilder().checkTableExistsQuery(),
 				Boolean.class, new Object[] { EntityType.FAVOURITE.getName() });
 		if (!fvExists) {
+			logger.info("FV table would be created...");
+
 			jdbcTemplate.execute(queries.getSchemaBuilder().getQueryToCreateTableFavourites());
+
+			logger.info("Indexes for fv table would be created...");
 			Stream.of(FV_INDEXED_COLUMNS).forEach(columnName -> jdbcTemplate.execute(
 					queries.getSchemaBuilder().getQueryToCreateIndex(EntityType.FAVOURITE.getName(), columnName)));
 
 		}
+
+		logger.info("Schema generation was ended");
 	}
 }
