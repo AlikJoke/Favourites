@@ -58,4 +58,9 @@ public class SecurityReferenceImpl implements SecurityReference {
 		operations.create(EntityType.USER.getName(), user, null);
 	}
 
+	@Override
+	public boolean isRegistered(String username) {
+		return operations.readById(username, EntityType.USER.getName()) != null;
+	}
+
 }

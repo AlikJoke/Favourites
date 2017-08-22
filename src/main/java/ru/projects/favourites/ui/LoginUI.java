@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Alignment;
@@ -19,6 +21,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.projects.favourites.security.SecurityReference;
 
+@SuppressWarnings("deprecation")
 @SpringUI(path = LoginUI.PATH)
 @Theme(ValoTheme.THEME_NAME)
 @Title(LoginUI.TITLE_UI)
@@ -38,6 +41,7 @@ public class LoginUI extends UI implements UIExceptionConfigurer {
 	private CheckBox rememberMe;
 	private Button forgottenPassword;
 	private HorizontalLayout loginComposite;
+	private Button btnFacebookLogin;
 
 	@Autowired
 	private SecurityReference security;
@@ -53,6 +57,7 @@ public class LoginUI extends UI implements UIExceptionConfigurer {
 		this.registerButton = new Button("Join now");
 		this.forgottenPassword = new Button("Forgot you password?");
 		this.loginComposite = new HorizontalLayout();
+		this.btnFacebookLogin = new Button("Login with Facebook", FontAwesome.FACEBOOK);
 	}
 
 	@Override
@@ -61,6 +66,9 @@ public class LoginUI extends UI implements UIExceptionConfigurer {
 		this.password.setPlaceholder("Enter you password");
 
 		this.forgottenPassword.setStyleName("link");
+		
+		btnFacebookLogin.addStyleName(ValoTheme.BUTTON_PRIMARY);
+		btnFacebookLogin.addClickListener(click -> Page.getCurrent().setLocation("/auth/facebook"));
 
 		this.loginButton.addClickListener(click -> {
 			security.login(this.username.getValue(), this.password.getValue());
@@ -78,6 +86,7 @@ public class LoginUI extends UI implements UIExceptionConfigurer {
 		content.addComponent(this.password);
 		content.addComponent(this.forgottenPassword);
 		content.addComponent(this.loginComposite);
+		content.addComponent(this.btnFacebookLogin);
 
 		loginComposite.setComponentAlignment(this.loginButton, Alignment.MIDDLE_CENTER);
 		loginComposite.setComponentAlignment(this.rememberMe, Alignment.MIDDLE_CENTER);

@@ -6,7 +6,6 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -22,7 +21,6 @@ import ru.projects.favourites.dao.impl.PostgreSQLQueries;
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan("ru.projects.favourites")
 @EnableTransactionManagement
 @EnableScheduling
 @PropertySource(value = { "classpath:application.properties" })

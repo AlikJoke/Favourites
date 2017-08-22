@@ -2,6 +2,8 @@ package ru.projects.favourites.security;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import ru.projects.favourites.rest.resources.UserResource;
 
 /**
@@ -43,4 +45,15 @@ public interface SecurityReference {
 	 *            {@code null}.
 	 */
 	void create(@NotNull UserResource user);
+
+	/**
+	 * Признак, что пользователь уже зарегистрирован в приложении.
+	 * <p>
+	 * 
+	 * @param username
+	 *            - имя пользователя, не может быть {@code null}.
+	 * @return {@code true} - если пользователь с таким именем существует,
+	 *         {@code false} - иначе.
+	 */
+	boolean isRegistered(@NotNull @NotEmpty String username);
 }
