@@ -6,6 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Service;
 
 import ru.projects.favourites.domain.EntityType;
@@ -19,11 +20,14 @@ public class SecurityReferenceImpl implements SecurityReference {
 	private UserDetailsService userDetailsService;
 
 	@Autowired
+	private SocialUserDetailsService socialUserDetailsService;
+
+	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private RESTOperations operations;
-	
+
 	private final static String USER_ENTITY_TYPE = EntityType.USER.getName();
 
 	public final static String PATH_LOGIN = "/login";
@@ -39,7 +43,7 @@ public class SecurityReferenceImpl implements SecurityReference {
 
 		if (usernamePasswordAuthenticationToken.isAuthenticated()) {
 			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-			
+
 			final UserResource user = (UserResource) operations.readById(username, USER_ENTITY_TYPE);
 			user.loggingLogin();
 			operations.update(USER_ENTITY_TYPE, user);
@@ -61,6 +65,23 @@ public class SecurityReferenceImpl implements SecurityReference {
 	@Override
 	public boolean isRegistered(String username) {
 		return operations.readById(username, EntityType.USER.getName()) != null;
+	}
+
+	@Override
+	public void loginByFacebook(String userId, String password) {
+		UserDetails userDetails = socialUserDetailsService.loadUserByUserId(userId);
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+				userDetails, password, userDetails.getAuthorities());
+		authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+		if (usernamePasswordAuthenticationToken.isAuthenticated()) {
+			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			final UserResource user = (UserResource) operations.readById(userId, USER_ENTITY_TYPE);
+			user.loggingLogin();
+			operations.update(USER_ENTITY_TYPE, user);
+		} else {
+			throw new SecurityException("Can't authenticate user!");
+		}
 	}
 
 }

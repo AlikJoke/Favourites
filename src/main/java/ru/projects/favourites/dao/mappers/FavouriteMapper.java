@@ -20,13 +20,16 @@ public class FavouriteMapper extends DomainMapper<Favourite> {
 
 	@Override
 	public Favourite mapRow(ResultSet arg0, int arg1) throws SQLException {
-		Favourite fav = new Favourite(arg0.getString(DomainMapper.UID_FIELD), arg0.getString(USERNAME_FIELD),
-				getLocalDateTimeValue(arg0.getTimestamp(ADDING_DT_FIELD)),
-				getLocalDateTimeValue(arg0.getTimestamp(DomainMapper.DELETING_DT_FIELD)));
-		fav.setName(arg0.getString(NAME_FIELD));
-		fav.setLink(arg0.getString(LINK_FIELD));
-		fav.setCounter(arg0.getLong(COUNTER_FIELD));
-		fav.setOrder(arg0.getInt(ORDER_FIELD));
+		Favourite fav = null;
+		if (arg0.next()) {
+			fav = new Favourite(arg0.getString(DomainMapper.UID_FIELD), arg0.getString(USERNAME_FIELD),
+					getLocalDateTimeValue(arg0.getTimestamp(ADDING_DT_FIELD)),
+					getLocalDateTimeValue(arg0.getTimestamp(DomainMapper.DELETING_DT_FIELD)));
+			fav.setName(arg0.getString(NAME_FIELD));
+			fav.setLink(arg0.getString(LINK_FIELD));
+			fav.setCounter(arg0.getLong(COUNTER_FIELD));
+			fav.setOrder(arg0.getInt(ORDER_FIELD));
+		}
 
 		return fav;
 	}

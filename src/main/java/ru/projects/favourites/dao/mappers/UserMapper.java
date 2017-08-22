@@ -18,13 +18,15 @@ public class UserMapper extends DomainMapper<User> {
 
 	@Override
 	public User mapRow(ResultSet arg0, int arg1) throws SQLException {
-		User user = new User(arg0.getString(DomainMapper.UID_FIELD),
-				getLocalDateTimeValue(arg0.getTimestamp(DomainMapper.DELETING_DT_FIELD)),
-				arg0.getString(PASSWORD_FIELD));
-		user.setEmail(arg0.getString(EMAIL_FIELD));
-		user.setRegDate(arg0.getDate(REG_DT_FIELD).toLocalDate());
-		user.setLastLoggedDT(getLocalDateTimeValue(arg0.getTimestamp(LAST_LOGGED_FIELD)));
-
+		User user = null;
+		if (arg0.next()) {
+			user = new User(arg0.getString(DomainMapper.UID_FIELD),
+					getLocalDateTimeValue(arg0.getTimestamp(DomainMapper.DELETING_DT_FIELD)),
+					arg0.getString(PASSWORD_FIELD));
+			user.setEmail(arg0.getString(EMAIL_FIELD));
+			user.setRegDate(arg0.getDate(REG_DT_FIELD).toLocalDate());
+			user.setLastLoggedDT(getLocalDateTimeValue(arg0.getTimestamp(LAST_LOGGED_FIELD)));
+		}
 		return user;
 	}
 

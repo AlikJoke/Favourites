@@ -23,6 +23,7 @@ import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.connect.web.ConnectController;
 import org.springframework.social.connect.web.ConnectInterceptor;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.social.facebook.api.Facebook;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
@@ -80,6 +81,11 @@ public class SocialConfig implements SocialConfigurer {
 	@Bean
 	public ConnectInterceptor<Facebook> facebookConnectInterceptor() {
 		return new FacebookConnectInterceptor();
+	}
+	
+	@Bean
+	public ProviderSignInUtils providerSignIn() {
+		return new ProviderSignInUtils(connectionFactoryLocator(), usersConnectionRepository());
 	}
 
 	@Bean

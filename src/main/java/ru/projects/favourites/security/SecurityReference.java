@@ -29,6 +29,18 @@ public interface SecurityReference {
 	void login(@NotNull String username, @NotNull String password);
 
 	/**
+	 * Авторизация в приложении по имени и паролю FB.
+	 * <p>
+	 * 
+	 * @param username
+	 *            - имя пользователя; не может быть {@code null}.
+	 * @param password
+	 *            - пароль пользователя; не может быть {@code null}.
+	 * @throws UserNotFoundException
+	 */
+	void loginByFacebook(@NotNull String username, @NotNull String password);
+
+	/**
 	 * Завершение сеанса работы с приложением для пользователя с указанным
 	 * именем.
 	 */

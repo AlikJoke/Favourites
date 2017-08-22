@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
-import com.vaadin.server.FontAwesome;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Alignment;
@@ -21,83 +19,68 @@ import com.vaadin.ui.themes.ValoTheme;
 
 import ru.projects.favourites.security.SecurityReference;
 
-@SuppressWarnings("deprecation")
-@SpringUI(path = LoginUI.PATH)
+@SpringUI(path = FacebookLoginUI.PATH)
 @Theme(ValoTheme.THEME_NAME)
-@Title(LoginUI.TITLE_UI)
-public class LoginUI extends UI implements UIExceptionConfigurer {
+@Title(FacebookLoginUI.TITLE_UI)
+public class FacebookLoginUI extends UI implements UIExceptionConfigurer {
 
-	private static final long serialVersionUID = 8655698055156902998L;
-
-	final static String PATH = "/ui/login";
-	final static String TITLE_UI = "Login page";
+	private static final long serialVersionUID = -992670491587923981L;
+	
+	final static String PATH = "/ui/auth/facebook";
+	final static String TITLE_UI = "Facebook login page";
 
 	private Label label;
 	private TextField username;
 	private PasswordField password;
 	private Button loginButton;
 	private VerticalLayout content;
-	private Button registerButton;
+	private Button backLoginBtn;
 	private CheckBox rememberMe;
-	private Button forgottenPassword;
 	private HorizontalLayout loginComposite;
-	private Button btnFacebookLogin;
 
 	@Autowired
 	private SecurityReference security;
 
-	public LoginUI() {
+	public FacebookLoginUI() {
 		super();
-		this.label = new Label("Welcome to FV application!");
+		this.label = new Label("Login from Facebook account!");
 		this.content = new VerticalLayout();
-		this.username = new TextField("Username");
+		this.username = new TextField("Login");
 		this.password = new PasswordField("Password");
 		this.loginButton = new Button("Sign in");
 		this.rememberMe = new CheckBox("Remember me");
-		this.registerButton = new Button("Join now");
-		this.forgottenPassword = new Button("Forgot you password?");
+		this.backLoginBtn = new Button("Back to login page");
 		this.loginComposite = new HorizontalLayout();
-		this.btnFacebookLogin = new Button("Login with Facebook", FontAwesome.FACEBOOK);
 	}
 
 	@Override
 	protected void init(VaadinRequest request) {
-		this.username.setPlaceholder("Enter you username");
+		this.username.setPlaceholder("Enter you login");
 		this.password.setPlaceholder("Enter you password");
 
-		this.forgottenPassword.setStyleName("link");
-		
-		btnFacebookLogin.addStyleName(ValoTheme.BUTTON_PRIMARY);
-		btnFacebookLogin.addClickListener(click -> Page.getCurrent().setLocation(FacebookLoginUI.PATH));
-
 		this.loginButton.addClickListener(click -> {
-			security.login(this.username.getValue(), this.password.getValue());
+			security.loginByFacebook(this.username.getValue(), this.password.getValue());
 			getUI().getPage().setLocation(FavouritesUI.PATH);
 		});
-		this.registerButton.addClickListener(click -> getUI().getPage().setLocation(RegisterUI.PATH));
-		this.forgottenPassword.addClickListener(click -> getUI().getPage().setLocation(ForgottenPasswordUI.PATH));
+		this.backLoginBtn.addClickListener(click -> getUI().getPage().setLocation(LoginUI.PATH));
 
 		loginComposite.addComponent(rememberMe);
 		loginComposite.addComponent(loginButton);
 
-		content.addComponent(this.registerButton);
+		content.addComponent(this.backLoginBtn);
 		content.addComponent(this.label);
 		content.addComponent(this.username);
 		content.addComponent(this.password);
-		content.addComponent(this.forgottenPassword);
 		content.addComponent(this.loginComposite);
-		content.addComponent(this.btnFacebookLogin);
 
 		loginComposite.setComponentAlignment(this.loginButton, Alignment.MIDDLE_CENTER);
 		loginComposite.setComponentAlignment(this.rememberMe, Alignment.MIDDLE_CENTER);
 
-		content.setComponentAlignment(this.registerButton, Alignment.TOP_RIGHT);
+		content.setComponentAlignment(this.backLoginBtn, Alignment.TOP_LEFT);
 		content.setComponentAlignment(this.label, Alignment.TOP_CENTER);
 		content.setComponentAlignment(this.username, Alignment.MIDDLE_CENTER);
 		content.setComponentAlignment(this.password, Alignment.MIDDLE_CENTER);
 		content.setComponentAlignment(this.loginComposite, Alignment.MIDDLE_CENTER);
-		content.setComponentAlignment(this.forgottenPassword, Alignment.MIDDLE_CENTER);
-		content.setComponentAlignment(this.btnFacebookLogin, Alignment.MIDDLE_CENTER);
 
 		configureUIException(content).setContent(content);
 	}
