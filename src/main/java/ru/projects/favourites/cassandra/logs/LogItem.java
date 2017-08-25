@@ -28,7 +28,7 @@ public class LogItem {
 	@Column("class_name")
 	private String className;
 
-	@Column("text")
+	@Column("text_t")
 	private String text;
 
 	public LogItem() {

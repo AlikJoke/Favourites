@@ -24,22 +24,24 @@ public class LogParserImpl implements LogParser {
 	private final static String DT_PATTERN = "^(\\d{4}-\\d{2}-\\d{2}.+)";
 
 	@Override
-	public List<LogItem> parse(File file) throws RuntimeException {
-		checkFile(file);
+	public List<LogItem> parse(File arg) throws RuntimeException {
+		checkFile(arg);
 
 		List<LogItem> logs = Lists.newArrayList();
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			Pattern pattern = Pattern.compile(DT_PATTERN);
-			try (final BufferedReader tmp = reader) {
-				tmp.lines().forEach(line -> {
-					if (pattern.matcher(line).matches())
-						logs.add(tokenizeAndBuild(line));
-				});
+		getFiles(arg).forEach(file -> {
+			try {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				Pattern pattern = Pattern.compile(DT_PATTERN);
+				try (final BufferedReader tmp = reader) {
+					tmp.lines().forEach(line -> {
+						if (pattern.matcher(line).matches())
+							logs.add(tokenizeAndBuild(line));
+					});
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		});
 		return logs;
 	}
 

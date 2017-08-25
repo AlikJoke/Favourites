@@ -17,7 +17,7 @@ import org.springframework.data.cassandra.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
-@PropertySource(value = { "classpath:META-INF/application.properties" })
+@PropertySource(value = { "classpath:application.properties" })
 @EnableCassandraRepositories(basePackages = { "ru.projects.favourites.cassandra.repository" })
 public class CassandraConfig {
 
